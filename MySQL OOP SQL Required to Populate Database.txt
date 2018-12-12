@@ -1,0 +1,106 @@
+/* for MySQL  */
+
+DROP DATABASE IF EXISTS tutoring;
+
+CREATE DATABASE tutoring;
+
+USE tutoring;
+
+CREATE TABLE course (
+	CourseCode VARCHAR(7) NOT NULL PRIMARY KEY,
+        CourseName VARCHAR(45) NOT NULL,
+	CourseDescription TEXT NOT NULL
+)	;
+
+CREATE TABLE experience (
+	ExperienceID INT NOT NULL PRIMARY KEY, 
+	Description TEXT NOT NULL
+)	;
+
+CREATE TABLE student (
+	StudentID INT NOT NULL PRIMARY KEY, 
+	LastName VARCHAR(45) NOT NULL, 
+	FirstName VARCHAR(45) NOT NULL, 
+	Email VARCHAR(45), 
+        PhoneNumber VARCHAR(45),
+		IsATutor BIT(1) NOT NULL
+)	;
+
+CREATE TABLE tutor (
+	TutorID INT NOT NULL PRIMARY KEY, 
+	LastName VARCHAR(45) NOT NULL, 
+	FirstName VARCHAR(45) NOT NULL, 
+	Email VARCHAR(45), 
+	PhoneNumber VARCHAR(15), 
+	Status VARCHAR(45) NOT NULL, 
+	experience_ExperienceID INT NOT NULL,
+        FOREIGN KEY (experience_ExperienceID) REFERENCES experience (ExperienceID)
+)	;
+
+CREATE TABLE session (
+	DateKey DATE NOT NULL , 
+	TimeKey TIME NOT NULL , 
+	StudentLastName VARCHAR(45) NOT NULL, 
+	SessionStatus INT NOT NULL, 
+	SessionTopic TEXT NOT NULL,
+        tutor_TutorID INT(11) NOT NULL,
+        course_CourseCode VARCHAR(7) NOT NULL,
+        student_StudentID INT(11) NOT NULL,
+        PRIMARY KEY (DateKey, TimeKey, tutor_TutorID, course_CourseCode, student_StudentID),
+    FOREIGN KEY (tutor_TutorID) REFERENCES tutor(TutorID),
+    FOREIGN KEY (course_CourseCode) REFERENCES  course(CourseCode),
+    FOREIGN KEY (student_StudentID) REFERENCES student(StudentID)
+)	;
+
+    CREATE TABLE tutorcourse (
+    tutor_TutorID INT NOT NULL,
+    course_CourseCode VARCHAR(7) NOT NULL,
+    PRIMARY KEY (tutor_TutorID, course_CourseCode),
+    FOREIGN KEY (tutor_TutorID) REFERENCES tutor (TutorID),
+    FOREIGN KEY (course_CourseCode) REFERENCES course (CourseCode)
+)       ;
+
+CREATE TABLE studentcourse (
+   	student_StudentID INT NOT NULL,
+	course_CourseCode VARCHAR(7) NOT NULL,
+   PRIMARY KEY (student_StudentID,course_CourseCode),
+   FOREIGN KEY (student_StudentID) REFERENCES student(StudentID),
+   FOREIGN KEY (course_CourseCode) References course(CourseCode)
+)	;
+CREATE TABLE users(
+username VARCHAR(25) NOT NULL PRIMARY KEY,
+password VARCHAR(65)
+);
+
+
+INSERT INTO course (CourseCode,CourseName,CourseDescription) VALUES("CST8288", "OOP with Design Patterns", "Java Programming");
+INSERT INTO course (CourseCode,CourseName,CourseDescription) VALUES("MAT1104", "Introduction to Calculus", "Calculus 101");
+
+INSERT INTO experience (ExperienceID,Description) VALUES(1,"New tutor");
+INSERT INTO experience (ExperienceID,Description) VALUES(2,"Intermediate tutor");  
+INSERT INTO experience (ExperienceID,Description) VALUES(3,"Advanced tutor");
+
+INSERT INTO student(StudentID, LastName, FirstName, Email, PhoneNumber, IsATutor) VALUES (11111, "Fox", "Kevin", "KevinIsEmail@Email.com", "613-555-5555", 1);
+INSERT INTO student(StudentID, LastName, FirstName, Email, PhoneNumber, IsATutor) VALUES (11112, "Blow", "Joe", "JoeIsEmail@Email.com", "613-555-5554", 0);
+INSERT INTO student(StudentID, LastName, FirstName, Email, PhoneNumber, IsATutor) VALUES (11113, "Black", "Yellow", "YellowIsEmail@Email.com", "613-555-5556", 0);
+INSERT INTO student(StudentID, LastName, FirstName, Email, PhoneNumber, IsATutor) VALUES (11114, "Lottus", "Fred", "FredIsEmail@Email.com", "613-555-5557", 1);
+
+INSERT INTO tutor(TutorID,LastName, FirstName,Email,PhoneNumber,Status,experience_ExperienceID) VALUES(101, "Fox","Kevin", "KevinIsEmail@Email.com","613-555-5555","Active",1);
+INSERT INTO tutor(TutorID,LastName, FirstName,Email,PhoneNumber,Status,experience_ExperienceID) VALUES(100, "Lottus","Fred", "FredIsEmail@Email.com","613-555-5557","Active",3);
+
+INSERT INTO studentcourse(student_StudentID,course_CourseCode) VALUES(11111,"CST8288");
+INSERT INTO studentcourse(student_StudentID,course_CourseCode) VALUES(11112,"CST8288");
+INSERT INTO studentcourse(student_StudentID,course_CourseCode) VALUES(11113,"CST8288");
+INSERT INTO studentcourse(student_StudentID,course_CourseCode) VALUES(11114,"CST8288");
+INSERT INTO studentcourse(student_StudentID,course_CourseCode) VALUES(11114,"MAT1104");
+
+INSERT INTO tutorcourse(tutor_TutorID,course_CourseCode) VALUES (101,"CST8288");
+INSERT INTO tutorcourse(tutor_TutorID,course_CourseCode) VALUES (100,"CST8288");
+INSERT INTO tutorcourse(tutor_TutorID,course_CourseCode) VALUES (100,"MAT1104");
+
+INSERT INTO session (DateKey,TimeKey,StudentLastName,SessionStatus,SessionTopic,tutor_TutorID,course_CourseCode,student_StudentID) VALUES ('2018-07-20','12:00:00',"Blow",0,"Programming",100,"CST8288",11112);
+INSERT INTO session (DateKey,TimeKey,StudentLastName,SessionStatus,SessionTopic,tutor_TutorID,course_CourseCode,student_StudentID) VALUES ('2018-07-20','13:00:00',"Black",1,"Programming",101,"CST8288",11113);
+
+INSERT INTO users(username,password) VALUES("scott","43b90920409618f188bfc6923f16b9fa"); /*tiger is the password*/
+
+
